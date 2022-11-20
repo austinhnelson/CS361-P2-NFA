@@ -1,59 +1,75 @@
 package fa.nfa;
-
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+
 import fa.State;
+import fa.dfa.DFAState;
 
 /**
- * Represents a NFA state and
- * its transitions to other states
  * 
- * @author patricksantana austinnelson
+ * @authors
+ *
  */
-public class NFAState extends State {
+public class NFAState extends State{
+	
+	private HashMap<Character,LinkedHashSet<NFAState>> delta;//delta - NOTE: each DFA state corresponds to a set of NFA states
+	private boolean isFinal;//remembers its type
+	
+	/**
+	 * Default constructor
+	 * @param name the state name
+	 */
+	public NFAState(String name) {
+		initDefault(name);
+		isFinal = false;
+	}
+	
+	/**
+	 * Overloaded constructor that sets the state type
+	 * @param name the state name
+	 * @param isFinal the type of state: true - final, false - nonfinal.
+	 */
+	public NFAState(String name, boolean isFinal) {
+		initDefault(name);
+		this.isFinal = isFinal;
+	}
 
-    private boolean isFinal;
-
-    HashMap<Character, NFAState> transitionMap;
-
-    /**
-     * Creates a new DFAState - default constructor
-     * 
-     * @param name
-     */
-    public NFAState(String name) {
-        this.name = name;
-        isFinal = false;
-        transitionMap = new HashMap<Character, NFAState>();
-    }
-
-    /**
-     * Overload construction to set final state
-     * 
-     * @param name
-     * @param isFinal whether or not it is a final state
-     */
-    public NFAState(String name, boolean isFinal) {
-        this.name = name;
-        this.isFinal = isFinal;
-    }
-
-    /**
-     * Add a transition to the state
-     * 
-     * @param k       alphabet symbol
-     * @param toState the state referencing
-     */
-    public void addTransition(char k, NFAState toState) {
-        transitionMap.put(k, toState);
-    }
-
-    /**
-     * Returns final state
-     * 
-     * @return whether or not state is final
-     */
-    public boolean isFinal() {
-        return isFinal;
-    }
-
+	private void initDefault(String name){
+		this.name = name;
+		delta = new HashMap<Character, LinkedHashSet<NFAState>>();
+	}
+	
+	/**
+	 * Accessor for the state type
+	 * @return true if final and false otherwise
+	 */
+	public boolean isFinal(){
+		return isFinal;
+	}
+	
+	/**
+	 * Add the transition from <code> this </code> object
+	 * @param onSymb the alphabet symbol
+	 * @param toState to NFA state
+	 */
+	public void addTransition(char onSymb, NFAState toState){
+		//to do?
+	}
+	
+	/**
+	 * Retrieves the state that <code>this</code> transitions to
+	 * on the given symbol
+	 * @param symb - the alphabet symbol
+	 * @return the new state 
+	 */
+	public LinkedHashSet<NFAState> getTo(char symb){
+		LinkedHashSet<NFAState> ret = delta.get(symb);
+		if(ret == null){
+			 System.err.println("ERROR: DFAState.getTo(char symb) returns null on " + symb + " from " + name);
+			 System.exit(2);
+			}
+		return delta.get(symb);
+	}
+	
+	
 }
