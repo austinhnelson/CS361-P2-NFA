@@ -3,31 +3,31 @@ package fa.nfa;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import fa.State;
+import fa.dfa.DFA;
 
-    mport fa.dfa.DFA;
-        
+/**
+ * Simulates a Non-Deterministic Finite 
+ * Automata
+ * 
+ * @author patricksantana austinnelson
+ */
+public class NFA implements NFAInterface {
 
-    *
+	/* Defining machine variables */
+	private NFAState startState;
+	private Set<NFAState> states;
+	private Set<Character> alphabet;
 
-    * 
-         @author patricksantana austinnels
+	/**
+	 * Creates a new NFA, default constructor
+	 */
+	public NFA(){
+		states = new LinkedHashSet<NFAState>();
+		alphabet = new LinkedHashSet<Character>();
+	}
 
-    u
-
-    /* Defining machine variables */
-        rivate NFAState startState;
-
-    p
-
-    /**
-        * Creates a new NFA, default const
-
-    p
-
-    	alphabet = new Linke
-        
-        
-    @Override
+	@Override
 	public void addState(String nextToken) {
 		NFAState stateToAdd = new NFAState(nextToken);
 		states.add(stateToAdd);
