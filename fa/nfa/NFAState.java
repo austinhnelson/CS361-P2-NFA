@@ -15,8 +15,8 @@ import fa.dfa.DFAState;
  */
 public class NFAState extends State {
 
-	HashMap<Character, LinkedHashSet<NFAState>> delta;// delta - NOTE: each DFA state corresponds to a set of
-														// NFA states
+	private HashMap<Character, LinkedHashSet<NFAState>> delta;// delta - NOTE: each DFA state corresponds to a set of
+	// NFA states
 	private boolean isFinal;// remembers its type
 
 	/**

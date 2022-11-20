@@ -52,10 +52,10 @@ public class NFA implements NFAInterface {
         NFAState from = checkIfExists(valueOf);
         NFAState to = checkIfExists(valueOf2);
         if (from == null) {
-            System.err.println("ERROR: No DFA state exists with name " + valueOf);
+            System.err.println("ERROR: No NFA state exists with name " + valueOf);
             System.exit(2);
         } else if (to == null) {
-            System.err.println("ERROR: No DFA state exists with name " + valueOf2);
+            System.err.println("ERROR: No NFA state exists with name " + valueOf2);
             System.exit(2);
         }
         from.addTransition(c, to);
