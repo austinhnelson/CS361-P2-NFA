@@ -1,10 +1,13 @@
 package fa.nfa;
 
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 
 import fa.State;
 import fa.dfa.DFA;
+import fa.dfa.DFAState;
 
 /**
  * Contains NFA data and converts NFA to DFA
@@ -18,6 +21,7 @@ public class NFA implements NFAInterface {
     private NFAState start = null;
     private Set<NFAState> states;
     private Set<Character> ordAbc;
+    DFA dfa = null;
 
     /**
      * Creates new NFA, default constructor
@@ -35,33 +39,57 @@ public class NFA implements NFAInterface {
     }
 
     @Override
-    public void addStartState(String startStateName) {
-        NFAState stateToAdd = new NFAState(startStateName);
-        states.add(stateToAdd);
-        start = stateToAdd;
+    public void addStartState(String name) {
+
+//Austin:
+//      NFAState stateToAdd = new NFAState(name);
+//      states.add(stateToAdd);
+//      start = stateToAdd;
+    	
+    	NFAState s = checkIfExists(name);
+		if(s == null){
+			s = new NFAState(name);
+			addState(s);
+		} else {
+			System.out.println("WARNING: A state with name " + name + " already exists in the NFA");
+		}
+		start = s;
+    }
+
+    private void addState(NFAState s) {
+		states.add(s);
+		
+	}
+
+	@Override
+    public void addState(String name) {
+//Austin:        
+//		NFAState stateToAdd = new NFAState(name);
+//      states.add(stateToAdd);
+		NFAState s = checkIfExists(name);
+		if( s == null){
+			s = new NFAState(name);
+			addState(s);
+		} else {
+			System.out.println("WARNING: A state with name " + name + " already exists in the NFA");
+		}
     }
 
     @Override
-    public void addState(String nextToken) {
-        NFAState stateToAdd = new NFAState(nextToken);
-        states.add(stateToAdd);
-    }
-
-    @Override
-    public void addTransition(String valueOf, char c, String valueOf2) {
-        NFAState from = checkIfExists(valueOf);
-        NFAState to = checkIfExists(valueOf2);
+    public void addTransition(String fromState, char onSymb, String toState) {
+        NFAState from = checkIfExists(fromState);
+        NFAState to = checkIfExists(toState);
         if (from == null) {
-            System.err.println("ERROR: No NFA state exists with name " + valueOf);
+            System.err.println("ERROR: No NFA state exists with name " + fromState);
             System.exit(2);
         } else if (to == null) {
-            System.err.println("ERROR: No NFA state exists with name " + valueOf2);
+            System.err.println("ERROR: No NFA state exists with name " + toState);
             System.exit(2);
         }
-        from.addTransition(c, to);
+        from.addTransition(onSymb, to);
 
-        if (!ordAbc.contains(c)) {
-            ordAbc.add(c);
+        if (!ordAbc.contains(onSymb)) {
+            ordAbc.add(onSymb);
         }
 
     }
@@ -71,10 +99,16 @@ public class NFA implements NFAInterface {
         // TODO Auto-generated method stub
         return null;
     }
-
+    
+    /**
+	 * Traverses all epsilon transitions and determine
+	 * what states can be reached from s through e
+	 * @param s
+	 * @return set of states that can be reached from s on epsilon trans.
+	 */
     @Override
     public Set<NFAState> eClosure(NFAState s) {
-        return null;
+    	return null;
     }
 
     @Override

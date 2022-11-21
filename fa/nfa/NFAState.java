@@ -2,9 +2,10 @@ package fa.nfa;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
 import fa.State;
-import fa.dfa.DFAState;
+//import fa.dfa.DFAState;
 
 /**
  * Represents a NFA State and
@@ -87,6 +88,14 @@ public class NFAState extends State {
 			System.exit(2);
 		}
 		return delta.get(symb);
+	}
+	
+	/**
+	 * Acquires transitions (delta) from hashmap
+	 * @return transitions
+	 */
+	public HashMap<Character, LinkedHashSet<NFAState>> getTransitions() {
+		return delta;
 	}
 
 }
