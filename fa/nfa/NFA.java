@@ -40,39 +40,30 @@ public class NFA implements NFAInterface {
 
     @Override
     public void addStartState(String name) {
-
-//Austin:
-//      NFAState stateToAdd = new NFAState(name);
-//      states.add(stateToAdd);
-//      start = stateToAdd;
-    	
-    	NFAState s = checkIfExists(name);
-		if(s == null){
-			s = new NFAState(name);
-			addState(s);
-		} else {
-			System.out.println("WARNING: A state with name " + name + " already exists in the NFA");
-		}
-		start = s;
+        NFAState s = checkIfExists(name);
+        if (s == null) {
+            s = new NFAState(name);
+            addState(s);
+        } else {
+            System.out.println("WARNING: A state with name " + name + " already exists in the NFA");
+        }
+        start = s;
     }
 
     private void addState(NFAState s) {
-		states.add(s);
-		
-	}
+        states.add(s);
 
-	@Override
+    }
+
+    @Override
     public void addState(String name) {
-//Austin:        
-//		NFAState stateToAdd = new NFAState(name);
-//      states.add(stateToAdd);
-		NFAState s = checkIfExists(name);
-		if( s == null){
-			s = new NFAState(name);
-			addState(s);
-		} else {
-			System.out.println("WARNING: A state with name " + name + " already exists in the NFA");
-		}
+        NFAState s = checkIfExists(name);
+        if (s == null) {
+            s = new NFAState(name);
+            addState(s);
+        } else {
+            System.out.println("WARNING: A state with name " + name + " already exists in the NFA");
+        }
     }
 
     @Override
@@ -99,16 +90,46 @@ public class NFA implements NFAInterface {
         // TODO Auto-generated method stub
         return null;
     }
-    
-    /**
-	 * Traverses all epsilon transitions and determine
-	 * what states can be reached from s through e
-	 * @param s
-	 * @return set of states that can be reached from s on epsilon trans.
-	 */
+
     @Override
     public Set<NFAState> eClosure(NFAState s) {
-    	return null;
+        // Get all e transitions out of desired state
+        Set<NFAState> returnVal = s.getTo('e');
+        // Check to make sure there are actually states
+        if (returnVal == null) {
+            return null;
+        }
+        // Loop through all the states to check for more e transitions
+        for (NFAState itr : returnVal) {
+            returnVal.addAll(eClosure(itr, returnVal));
+        }
+        return returnVal;
+    }
+
+    /**
+     * Private helper method to implement DFS
+     * with epsilon transitions
+     * 
+     * @param s      state concerned with
+     * @param result result set of states
+     * @return result set of states (appended with any more found)
+     */
+    private Set<NFAState> eClosure(NFAState s, Set<NFAState> result) {
+        // Make sure there is a valid epsilon transition
+        if (s.getTo('e') != null) {
+            // Get all epsilon transitions
+            Set<NFAState> r = s.getTo('e');
+            // Iterate through all occurences
+            for (NFAState itr : r) {
+                // Depth-first search the set
+                eClosure(itr, result);
+                // Add state to result
+                result.add(itr);
+            }
+        } else {
+            return result;
+        }
+        return result;
     }
 
     @Override
@@ -157,6 +178,59 @@ public class NFA implements NFAInterface {
             }
         }
         return ret;
+    }
+
+    /**
+     * For debugging purposes
+     * 
+     * @return NFA output
+     */
+    public String toString() {
+        String output = "Initial State: " + start.toString();
+        output += "\nFinal States: ";
+        String allStates = "\nStates: ";
+        String ab = "\nAlphabet: ";
+        for (NFAState itr : states) {
+            if (itr.isFinal()) {
+                output += itr.toString() + " ";
+            }
+            allStates += itr.toString() + " ";
+        }
+        for (Character itr : ordAbc) {
+            ab += itr.toString() + " ";
+        }
+
+        output += allStates;
+        output += ab;
+
+        // create transition table
+        output += "\ndelta =\n" + String.format("%10s", "");
+        for (char c : ordAbc) {
+            output += String.format("%10s", c);
+        }
+        output += "\n";
+        for (NFAState state : states) {
+            output += String.format("%10s", state.toString());
+            for (char c : ordAbc) {
+                if (state.getTo(c) != null) {
+                    output += String.format("%10s", state.getTo(c).toString());
+                } else {
+                    output += "\t    ";
+                }
+            }
+            output += "\n";
+        }
+
+        // testing eClosure
+        Set<NFAState> mystates = null;
+        for (NFAState itr : states) {
+            if (itr.getName().equals("4")) {
+                mystates = eClosure(itr);
+            }
+        }
+
+        output += mystates.toString();
+        return output;
     }
 
 }

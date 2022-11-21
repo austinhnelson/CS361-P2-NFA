@@ -82,16 +82,18 @@ public class NFAState extends State {
 	 * @return the new state
 	 */
 	public LinkedHashSet<NFAState> getTo(char symb) {
-		LinkedHashSet<NFAState> ret = delta.get(symb);
-		if (ret == null) {
-			System.err.println("ERROR: DFAState.getTo(char symb) returns null on " + symb + " from " + name);
-			System.exit(2);
-		}
+		// LinkedHashSet<NFAState> ret = delta.get(symb);
+		// if (ret == null) {
+		// System.err.println("ERROR: DFAState.getTo(char symb) returns null on " + symb
+		// + " from " + name);
+		// System.exit(2);
+		// }
 		return delta.get(symb);
 	}
-	
+
 	/**
 	 * Acquires transitions (delta) from hashmap
+	 * 
 	 * @return transitions
 	 */
 	public HashMap<Character, LinkedHashSet<NFAState>> getTransitions() {
