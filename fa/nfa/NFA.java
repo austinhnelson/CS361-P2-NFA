@@ -1,5 +1,8 @@
 package fa.nfa;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -7,7 +10,6 @@ import java.util.Set;
 
 import fa.State;
 import fa.dfa.DFA;
-import fa.dfa.DFAState;
 
 /**
  * Contains NFA data and converts NFA to DFA
@@ -21,7 +23,6 @@ public class NFA implements NFAInterface {
     private NFAState start = null;
     private Set<NFAState> states;
     private Set<Character> ordAbc;
-    DFA dfa = null;
 
     /**
      * Creates new NFA, default constructor
@@ -84,11 +85,124 @@ public class NFA implements NFAInterface {
         }
 
     }
-
+    
+    /**
+     * 
+     */
     @Override
-    public DFA getDFA() {
-        // TODO Auto-generated method stub
-        return null;
+    public DFA getDFA() {  	
+    	//Declare a queue structure for traversal
+    	//need the ability to add first and remove last
+		LinkedList<HashSet<NFAState>> queue = new LinkedList<HashSet<NFAState>>();
+		//keep track of visited sets
+		HashSet<Set<NFAState>> visitedStatesSet = new HashSet<Set<NFAState>>();
+		//begin by collecting start set of states
+		HashSet<NFAState> q0Set = new HashSet<NFAState>();
+		
+		DFA dfa = new DFA();
+		//final state flag
+		boolean finalState = false;
+		
+		//Add q0 of NFA to Q' of DFA. Then find the transitions from this start state.
+		q0Set.add(start);
+		//add epsilon transitions from q0 to q0Set
+		q0Set.addAll(eClosure(start, new HashSet<NFAState>()));
+		
+		//for states in q0Set, if state is final, set final state flag
+		for (NFAState nfa : q0Set) 
+		{
+			if (nfa.isFinal()) 
+			{
+				finalState = true;
+				//if final state flag set, add final states to dfa from q0Set
+				dfa.addFinalState(q0Set.toString());
+			}
+		}
+		
+		// add states to dfa from q0Set 
+		dfa.addStartState(q0Set.toString());
+		
+		//System.out.println(dfa.toString());
+		
+		//add q0Set to beginning of queue
+		queue.addFirst(q0Set);
+		
+		
+		while (!queue.isEmpty()) {
+			
+			//remove last element from queue and store 
+			HashSet<NFAState> pos = queue.removeLast();
+			
+			//add removed state to HashSet visited states - check if already visited
+			visitedStatesSet.add(pos);
+			
+			//for each char in input alphabet - all transitions
+			for (Character c : ordAbc) { 
+				//System.out.println(c);
+				
+				//store state and associations
+				HashSet<NFAState> stateSet = new HashSet<NFAState>();
+				finalState = false;
+				
+				//for each nfa state at pos in hashset
+				for (NFAState nfa : pos) {
+					
+					//retrieve states transitioned to on the given symbol
+					HashSet<NFAState> transitionTo = nfa.getTo(c);
+					//System.out.println(transitions);
+					
+					//if transitionTo state exists given NFA state
+					if (transitionTo != null) { 
+						
+						//for each state in transitionTo
+						for (NFAState t : transitionTo) { 
+							//account for 'e' transitions given position in the NFA, recursively
+							eClosure(t, stateSet);
+														
+							//add transitionTo state to stateSet
+							stateSet.add(t);
+							
+							//check if to-state is a final state and set flag
+							if (t.isFinal()) {
+								finalState = true;
+							}
+						}
+					}
+				}
+				
+				//if the state is the final state
+				if (finalState == true) 
+				{
+					if (!visitedStatesSet.contains(stateSet) && !queue.contains(stateSet)) 
+					{
+						//add final state
+						dfa.addFinalState(stateSet.toString());
+					}
+					
+					//add transitions to dfa
+					dfa.addTransition(pos.toString(), c, stateSet.toString());
+				} 
+				
+				//if the state is not the final state
+				else {
+					if (!visitedStatesSet.contains(stateSet) && !queue.contains(stateSet)) 
+					{
+						//add states to dfa
+						dfa.addState(stateSet.toString());
+					}
+					//add transitions to dfa
+					dfa.addTransition(pos.toString(), c, stateSet.toString());
+				}
+				
+				//set as first state set until a new one is added
+				if (!visitedStatesSet.contains(stateSet) && !queue.contains(stateSet)) 
+				{	
+					queue.addFirst(stateSet);
+
+				}
+			}
+		}
+		return dfa;
     }
 
     @Override
@@ -224,7 +338,7 @@ public class NFA implements NFAInterface {
         // testing eClosure
         Set<NFAState> mystates = null;
         for (NFAState itr : states) {
-            if (itr.getName().equals("4")) {
+            if (itr.getName().equals("0")) {
                 mystates = eClosure(itr);
             }
         }
