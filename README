@@ -1,0 +1,32 @@
+# Project 2: Nondeterministic Finite Automata (NFA)
+* Author: Austin Nelson, Patrick Santana
+* Class: CS121 Section #002
+* Semester: Fall 2022
+
+## Overview
+A program that simulates a nondeterministic finite automata (NFA), given a specific formatted input file. The NFA includes a function to produce an equivalent deterministic finite automata (DFA) to the specific instance. 
+
+## Reflection
+Write a brief (2-3 paragraph) reflection describing your experience with 
+this
+project. Answer the following questions (but feel free to add other 
+insights):
+- What worked well and what was a struggle?
+- What concepts still aren't quite clear?
+- What techniques did you use to make your code easy to debug and modify?
+- What would you change about your design process?
+- If you could go back in time, what would you tell yourself about doing 
+this project?
+
+This project definitely was a lot more involved than the previous project (P1) but involved a very similar structure to the DFA implementation. 
+
+## Compiling and Using
+Compiling:
+$javac fa/nfa/*.java
+
+To Run:
+$java fa/nfa/NFADriver.java <input file name>
+
+Input File Structure: First line - names of the final states. Second line - name of the start state. Third line - any other states in the machine. Fourth line - consists of the transitions inputted as three characters each e.g. a1b Fifth line on - strings for the machine to test if valid
+
+## Sources used
